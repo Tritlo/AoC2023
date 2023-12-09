@@ -92,7 +92,6 @@ main :: IO ()
 main = do readFile "example-1" >>= print . part1 . lines
           readFile "example-2" >>= print . part1 . lines
           readFile "input" >>= print . part1 . lines
-        --   readFile "example-3" >>= print . parse2 . lines
           readFile "example-3" >>= print . part2 . lines
           readFile "example-3" >>= print . foldr1 lcm . part2 . lines
           readFile "input" >>= print . foldr1 lcm . part2 . lines
