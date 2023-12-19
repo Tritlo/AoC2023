@@ -60,6 +60,11 @@ part1 p = (greenArea (fst $ head mp) 0 mp)
          mp = moves (0,0) path_p
          path [] = []
          path ((d,n):ds) = (replicate n d) <> (path ds)
+         -- Sketch for speed:
+         -- just calculate joints, [East,North,West],
+         -- make sure to increment the y,
+         -- East 6 = East 5 ++ join point
+         -- East n would contribute ((n-1)*(-4*y +2)) etc.
          delta y [d1,d2] = case  [d1,d2] of
                              [East, East]   -> -4*y +2
                              [East, North]  -> -2*y +1

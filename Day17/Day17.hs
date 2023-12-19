@@ -39,10 +39,10 @@ parse strs = Arr.array ((1,1), fst (last res)) res
 --   part.
 
 
-dijkstra2D :: Array (Int,Int) Int -> Int
-dijkstra2D arr = 
+dijkstra2D :: Int -> Int -> Array (Int,Int) Int -> Int
+dijkstra2D min_step max_step arr =
     let inBounds (y,x) = y >= i_y && x >= i_x &&
-                         y <= t_y && x <= t_x 
+                         y <= t_y && x <= t_x
         pf !cc [c@(p,_)] = (cc + arr Arr.! p, c)
         pf !cc ((p,_):cs) = pf (cc + (arr Arr.! p)) cs
         go :: Set ((Int,Int),Dir) -> Set (Int,((Int,Int),Dir)) -> Int
@@ -54,18 +54,17 @@ dijkstra2D arr =
               let visited' = Set.insert (pos,dir) visited
                   -- only turn, straight would have been covered if allowed.
                   v_dirs = if dir == Left || dir == Right
-                           then [Up,Down] 
-                           else [Left,Right]
-                            
-                  steps = v_dirs >>= (\d -> map (flip replicate d) [1..3])
+                           then [Up,Down] else [Left,Right]
+
+                  steps = v_dirs >>= (\d -> map (flip replicate d) [min_step..max_step])
                   paths = map (moves pos) steps
                   valid_paths = filter (all (inBounds . fst)) paths
                   p_pls = Set.fromList $ map (pf pl) valid_paths
 
               in go visited' $ Set.union p_pls heap_queue
           where  ((pl, (pos,dir)),rest) = Set.deleteFindMin heap_queue
-                 
-                  
+
+
     in (go Set.empty $ Set.fromList $ [(0,(init,Right)), (0,(init,Down))])
   where (init@(i_y,i_x),target@(t_y,t_x)) = Arr.bounds arr
         move :: (Int,Int) -> Dir -> (Int,Int)
@@ -81,5 +80,7 @@ dijkstra2D arr =
 
 
 main :: IO ()
-main = do readFile "example" >>= print .  dijkstra2D . parse . lines
-          readFile "input" >>= print .  dijkstra2D . parse . lines
+main = do readFile "example" >>= print .  dijkstra2D 1 3. parse . lines
+          readFile "input" >>= print .  dijkstra2D 1 3. parse . lines
+          readFile "example" >>= print .  dijkstra2D 4 10. parse . lines
+          readFile "input" >>= print .  dijkstra2D 4 10. parse . lines
